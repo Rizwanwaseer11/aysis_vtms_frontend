@@ -1,36 +1,33 @@
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
 
-import './App.css'
+import PageNotFound from "./pages/PageNotFound";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import AdminLayout from "./pages/AdminLayout";
+import Dashboard from "./pages/Dashboard";
+import Vehicles from "./pages/Admin/Vehicles";
 
 function App() {
- 
-
   return (
     <>
-<header className="bg-gray-900">
-  <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
-    <div className="flex lg:flex-1">
-      <a href="#" className="-m-1.5 p-1.5">
-        <span className="sr-only">Your Company</span>
-        <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt className="h-8 w-auto" />
-      </a>
-    </div>
-    <el-popover-group className="hidden lg:flex lg:gap-x-12">
-      
-      <a href="#" className="text-sm/6 font-semibold text-white">Features</a>
-      <a href="#" className="text-sm/6 font-semibold text-white">Marketplace</a>
-      <a href="#" className="text-sm/6 font-semibold text-white">Company</a>
-    </el-popover-group>
-    <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-      <a href="#" className="text-sm/6 font-semibold text-white">Log in <span aria-hidden="true">→</span></a>
-    </div>
-  </nav>
-  
-</header>
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="*" element={<PageNotFound />} />
 
-    <h1>farha waseer</h1>
+            <Route path="/login" element={<Login />} />
 
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="manage-vehicles" element={<Vehicles />  } />
+            </Route>
+          </Routes>
+        </div>
+      </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
