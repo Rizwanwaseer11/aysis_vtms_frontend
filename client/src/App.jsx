@@ -5,8 +5,14 @@ import PageNotFound from "./pages/PageNotFound";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import AdminLayout from "./pages/AdminLayout";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Admin/Dashboard";
 import Vehicles from "./pages/Admin/Vehicles";
+import Bins from "./pages/Admin/Bins";
+import Management from "./pages/Admin/Management";
+import Attendance from "./pages/Admin/Attendance";
+import Operations from "./pages/Admin/Operations";
+import Locations from "./pages/Admin/Locations";
+import Users from './pages/Admin/Users';
 
 function App() {
   return (
@@ -21,7 +27,13 @@ function App() {
 
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
-              <Route path="manage-vehicles" element={<Vehicles />  } />
+              <Route path="manage-vehicles" element={<Vehicles />} />
+               <Route path="manage-users" element={<Users />} />
+              <Route path="manage-locations" element={<Locations />} />
+              <Route path="manage-operations" element={<Operations />} />
+              <Route path="manage-attendance" element={<Attendance />} />
+              <Route path="manage-management" element={<Management />} />
+              <Route path="manage-bins" element={<Bins />} /> 
             </Route>
           </Routes>
         </div>
