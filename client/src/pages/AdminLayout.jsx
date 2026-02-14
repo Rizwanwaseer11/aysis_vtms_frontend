@@ -10,7 +10,8 @@ const AdminLayout = () => {
         <Sidebar />
         <div className="flex-1 px-8 py-5">
           <Nav />
-          <div className="mt-8 bg-white p-6 rounded-lg shadow">
+          <div >
+          {/* <div className="mt-8 bg-white p-6 rounded-lg shadow"> */}
             <Outlet />
           </div>
         </div>
