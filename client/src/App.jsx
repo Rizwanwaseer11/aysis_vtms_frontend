@@ -1,8 +1,7 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 
 import PageNotFound from "./pages/PageNotFound";
-import Home from "./pages/Home";
 import Login from "./pages/Login";
 import AdminLayout from "./pages/AdminLayout";
 import Dashboard from "./pages/Admin/Dashboard";
@@ -20,7 +19,7 @@ function App() {
       <div className="min-h-screen flex flex-col">
         <div className="flex-1">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Navigate to="/admin" replace />} />
             
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<PageNotFound />} />
@@ -43,3 +42,5 @@ function App() {
 }
 
 export default App;
+
+

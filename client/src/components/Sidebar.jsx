@@ -56,7 +56,7 @@ const adminMenu = [
 
 const Sidebar = () => {
   return (
-    <div className="w-72 min-h-screen bg-white shadow-lg">
+    <div className="sticky top-0 h-screen w-72 overflow-y-auto bg-white shadow-lg">
       {/* Logo */}
       <div className=" flex items-center  justify-items-start p-1">
         <img src={logo} alt="Logo" className="h-32.5  w-35  opacity-100" />
