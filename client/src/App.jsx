@@ -21,9 +21,9 @@ function App() {
         <div className="flex-1">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="*" element={<PageNotFound />} />
 
             <Route path="/login" element={<Login />} />
+            {/* <Route path="*" element={<PageNotFound />} /> */}
 
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
