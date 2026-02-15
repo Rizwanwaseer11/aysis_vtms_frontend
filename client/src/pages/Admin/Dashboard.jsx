@@ -1,7 +1,7 @@
 
 const Dashboard = () => {
   return (
-    <div>Dashboard</div>
+    <div className="mt-8 bg-white p-6 rounded-lg shadow">Dashboard</div>
   )
 }
 
