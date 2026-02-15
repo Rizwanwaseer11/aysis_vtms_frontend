@@ -20,11 +20,10 @@ function App() {
       <div className="min-h-screen flex flex-col">
         <div className="flex-1">
           <Routes>
-            {/* <Route path="/" element={<Home />} /> */}
-            <Route path="/" element={<Management />} />
+            <Route path="/" element={<Home />} />
 
             <Route path="/login" element={<Login />} />
-            {/* <Route path="*" element={<PageNotFound />} /> */}
+            <Route path="*" element={<PageNotFound />} />
 
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />

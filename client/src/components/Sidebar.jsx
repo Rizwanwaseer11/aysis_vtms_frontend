@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-
+import logo from "../assets/logo.png"; // Assuming you have a logo image in the assets folder
 import {
   FaTruck,
   FaUsers,
@@ -59,7 +59,7 @@ const Sidebar = () => {
     <div className="w-72 min-h-screen bg-white shadow-lg">
       {/* Logo */}
       <div className=" flex items-center  justify-items-start p-1">
-        {/* <img src="/logo.png" alt="Logo" className="h-32.5  w-35  opacity-100" /> */}
+        <img src={logo} alt="Logo" className="h-32.5  w-35  opacity-100" />
       </div>
 
       {/* Menu List */}
