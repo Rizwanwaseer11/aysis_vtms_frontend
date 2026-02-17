@@ -21,7 +21,7 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] px-4 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center bg-linear-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] px-4 overflow-hidden">
       
       {/* Form Card */}
       <form
@@ -97,12 +97,7 @@ const Login = () => {
         </button>
       </form>
 
-      {/* Soft Background Glow */}
-      <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute left-1/2 top-20 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] to-transparent rounded-full blur-3xl" />
-        <div className="absolute right-10 bottom-10 w-[400px] h-[200px] bg-gradient-to-bl from-indigo-700/40 to-transparent rounded-full blur-2xl" />
       
-      </div>
     </div>
   );
 };
