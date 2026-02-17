@@ -19,7 +19,7 @@ function App() {
       <div className="min-h-screen flex flex-col">
         <div className="flex-1">
           <Routes>
-            <Route path="/" element={<Navigate to="/admin" replace />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
             
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<PageNotFound />} />
