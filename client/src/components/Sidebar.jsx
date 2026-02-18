@@ -8,7 +8,9 @@ import {
   FaCalendarAlt,
   FaShieldAlt,
   FaTrash,
+
 } from "react-icons/fa"; // Importing some icons for the sidebar items
+import { LogOut } from "lucide-react";
 
 const adminMenu = [
   {
@@ -52,6 +54,11 @@ const adminMenu = [
     path: "manage-bins",
     icon: FaTrash,
   },
+  {
+    name: "LogOut",
+    path: "/login",
+    icon: LogOut,
+  },
 ];
 
 const Sidebar = () => {
@@ -80,7 +87,7 @@ const Sidebar = () => {
                 }`
               }
             >
-              <div className="w-6 h-6 mr-3 rounded-md flex items-center justify-center bg-[#0060B9]  text-white text-xs">
+              <div className={`w-6 h-6 mr-3 rounded-md flex items-center justify-center  bg-[#0060B9]  text-white text-xs`}>
                 {typeof Icon === "string" ? Icon : Icon && <Icon />}
               </div>
 
