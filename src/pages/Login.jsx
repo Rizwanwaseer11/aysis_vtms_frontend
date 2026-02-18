@@ -1,23 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Eye, EyeClosed, LockKeyhole, Mail } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setCredentials } from "../store/authSlice";
+import { useLoginEmployeeMutation } from "../store/api";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const token = useSelector((state) => state.auth.token);
+  const [loginEmployee, { isLoading }] = useLoginEmployeeMutation();
+  const [formError, setFormError] = useState("");
 
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (token) navigate("/admin", { replace: true });
+  }, [token, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    setFormError("");
+
+    try {
+      const result = await loginEmployee({
+        email: formData.email.trim(),
+        password: formData.password,
+      }).unwrap();
+      const payload = result?.data || {};
+      if (!payload?.token) throw new Error("Token missing in response");
+      dispatch(setCredentials({ token: payload.token, employee: payload.employee }));
+      navigate("/admin", { replace: true });
+    } catch (error) {
+      const message =
+        error?.data?.message ||
+        error?.error ||
+        error?.message ||
+        "Login failed. Please try again.";
+      setFormError(message);
+    }
   };
 
   return (
@@ -31,6 +61,11 @@ const Login = () => {
         <h1 className="text-white text-3xl mt-10 font-semibold">Login</h1>
 
         <p className="text-gray-400 text-sm mt-2">Please sign in to continue</p>
+        {formError ? (
+          <div className="mt-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm text-red-200">
+            {formError}
+          </div>
+        ) : null}
 
         {/* Email Field */}
         <div className="flex items-center w-full mt-6 bg-white/5 ring-1 ring-white/10 focus-within:ring-indigo-500 h-12 rounded-full overflow-hidden pl-6 gap-2 transition">
@@ -91,9 +126,10 @@ const Login = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="mt-4 w-full h-11 rounded-full text-white bg-indigo-600 hover:bg-indigo-500 transition font-medium mb-10"
+          disabled={isLoading}
+          className="mt-4 w-full h-11 rounded-full text-white bg-indigo-600 hover:bg-indigo-500 transition font-medium mb-10 disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          Login
+          {isLoading ? "Signing in..." : "Login"}
         </button>
       </form>
 

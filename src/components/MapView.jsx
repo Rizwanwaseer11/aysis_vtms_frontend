@@ -1,9 +1,17 @@
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-const containerStyle = {
-  width: "100%",
-  height: "500px",
-};
+const defaultIcon = new L.Icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconRetinaUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
 
 const center = {
   lat: 24.8607, // Karachi example
@@ -19,31 +27,34 @@ const GoogleMapView = () => {
   ];
 
   return (
-    <div className="  bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen">
       <div className="border-3 border-gray-300 rounded-4xl overflow-hidden shadow-lg">
-        <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={center}
-            zoom={14}
-          >
-            {locations.map((loc) => (
-              <Marker
-                key={loc.id}
-                position={{ lat: loc.lat, lng: loc.lng }}
-                icon={{
-                  url:
-                    loc.type === "green"
-                    
-                      ? "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
-                      : "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-                }}
-              />
-            ))}
-          </GoogleMap>
-        </LoadScript>
+        <MapContainer
+          center={[center.lat, center.lng]}
+          zoom={14}
+          scrollWheelZoom={true}
+          style={{ width: "100%", height: "500px" }}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {locations.map((loc) => (
+            <Marker
+              key={loc.id}
+              position={[loc.lat, loc.lng]}
+              icon={defaultIcon}
+            >
+              <Popup>
+                <div className="text-sm">
+                  <div>Bin #{loc.id}</div>
+                  <div className="text-gray-500">{loc.type.toUpperCase()}</div>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
       </div>
-      
     </div>
   );
 };
