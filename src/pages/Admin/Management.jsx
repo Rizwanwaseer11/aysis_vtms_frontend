@@ -356,7 +356,7 @@ const DesignationsSection = ({
         {designations.map((designation) => (
           <div
             key={designation._id}
-            className="bg-white border border-gray-200 rounded-[20px] px-3.75 py-4 flex justify-between items-start w-[227px] h-[102px] shadow-sm hover:shadow-lg"
+            className="bg-white border border-gray-200 rounded-[20px] px-3.75 py-4 flex justify-between items-start w-56.75 h-25.5 shadow-sm hover:shadow-lg"
             style={{ gap: "30px" }}
           >
             <div>
