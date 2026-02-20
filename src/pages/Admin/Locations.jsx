@@ -37,7 +37,7 @@ const DashboardStats = () => {
       value: 4,
       icon: <MapPinned size={22} />,
       bg: "bg-blue-100",
-      iconBg: "bg-blue-500",
+      iconBg: "bg-blue-400",
     },
     {
       title: "Total Wards",

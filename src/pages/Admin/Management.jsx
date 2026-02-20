@@ -846,7 +846,7 @@ const ManagementUsers = ({
 
       <div className="overflow-x-auto bg-white shadow-sm">
         <table className="w-full text-sm">
-          <thead className="text-gray-900 text-left">
+          <thead className="text-gray-500 text-left">
             <tr>
               <th className="px-4 py-3">HR #</th>
               <th className="px-4 py-3">Name</th>

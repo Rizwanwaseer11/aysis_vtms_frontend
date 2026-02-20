@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Search, MoreVertical } from "lucide-react";
 
 
@@ -16,6 +16,9 @@ export default Users
 
  function UserManagement() {
   const [activeTab, setActiveTab] = useState("Drivers");
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const users = [
     {
@@ -52,6 +55,61 @@ export default Users
     },
   ];
 
+  const allUsers = useMemo(() => [...users, ...users, ...users], [users]);
+
+  const filteredUsers = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return allUsers;
+
+    return allUsers.filter((user) =>
+      [user.id, user.name, user.phone, user.shift, user.vehicle, user.status]
+        .join(" ")
+        .toLowerCase()
+        .includes(query),
+    );
+  }, [allUsers, search]);
+
+  const totalItems = filteredUsers.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const startIndex = (safeCurrentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+  const showingFrom = totalItems > 0 ? startIndex + 1 : 0;
+  const showingTo = totalItems > 0 ? Math.min(endIndex, totalItems) : 0;
+
+  const maxVisiblePages = 4;
+  const visibleStartPage = Math.max(
+    1,
+    Math.min(
+      safeCurrentPage - Math.floor(maxVisiblePages / 2),
+      totalPages - maxVisiblePages + 1,
+    ),
+  );
+  const visibleEndPage = Math.min(
+    totalPages,
+    visibleStartPage + maxVisiblePages - 1,
+  );
+  const visiblePages = Array.from(
+    { length: visibleEndPage - visibleStartPage + 1 },
+    (_, index) => visibleStartPage + index,
+  );
+
+  const handleSearchChange = (event) => {
+    setSearch(event.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-2">
       <div className="bg-white rounded-3xl shadow-sm">
@@ -72,13 +130,15 @@ export default Users
               <input
                 type="text"
                 placeholder="Search"
+                value={search}
+                onChange={handleSearchChange}
                 className="pl-9 pr-4 py-2 rounded-xl bg-gray-100 text-sm focus:outline-none"
               />
             </div>
 
             {/* Add Button */}
             <button className="bg-black text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition">
-              + Add Vehicle
+              + Add User
             </button>
           </div>
         </div>
@@ -89,7 +149,7 @@ export default Users
             {["Drivers", "Supervisors"].map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => handleTabChange(tab)}
                 className={`flex-1 py-2 text-sm font-semibold rounded-full transition ${
                   activeTab === tab
                     ? "bg-white shadow text-gray-800"
@@ -120,9 +180,9 @@ export default Users
             </thead>
 
             <tbody>
-              {[...users, ...users].map((user, index) => (
+              {paginatedUsers.map((user, index) => (
                 <tr
-                  key={index}
+                  key={`${user.id}-${startIndex + index}`}
                   className="border-b border-gray-300 odd:bg-gray-100 even:bg-white hover:bg-gray-200 transition"
                 >
                   <td className="py-4 px-6 font-medium text-gray-700">
@@ -170,27 +230,41 @@ export default Users
 
         {/* ================= FOOTER ================= */}
         <div className="flex justify-between items-center p-6 text-sm text-gray-600">
-          <p>Showing 1-10 from 46 data</p>
+          <p>
+            Showing {showingFrom}-{showingTo} from {totalItems} data
+          </p>
 
           <div className="flex items-center gap-1">
-            <button className="w-8 h-8 rounded-full border border-gray-300">
+            <button
+              type="button"
+              onClick={() => handlePageChange(safeCurrentPage - 1)}
+              disabled={safeCurrentPage === 1}
+              className="w-8 h-8 rounded-full border border-gray-300 disabled:opacity-50"
+            >
               &lt;
             </button>
 
-            <button className="w-8 h-8 rounded-lg border border-gray-300">
-              1
-            </button>
-            <button className="w-8 h-8 rounded-lg border border-gray-300">
-              2
-            </button>
-            <button className="w-8 h-8 rounded-lg bg-blue-600 text-white">
-              3
-            </button>
-            <button className="w-8 h-8 rounded-lg border border-gray-300">
-              4
-            </button>
+            {visiblePages.map((page) => (
+              <button
+                key={page}
+                type="button"
+                onClick={() => handlePageChange(page)}
+                className={`w-8 h-8 rounded-lg border ${
+                  safeCurrentPage === page
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "border-gray-300"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
 
-            <button className="w-8 h-8 rounded-full border border-gray-300">
+            <button
+              type="button"
+              onClick={() => handlePageChange(safeCurrentPage + 1)}
+              disabled={safeCurrentPage === totalPages}
+              className="w-8 h-8 rounded-full border border-gray-300 disabled:opacity-50"
+            >
               &gt;
             </button>
           </div>
