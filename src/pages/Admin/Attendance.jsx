@@ -6,74 +6,11 @@ import {
   XCircle,
   ChevronLeft,
   ChevronRight,
-  Users,
-  ShieldCheck,
-  UserCheck
+  Check
 } from "lucide-react";
 
-const Attendance = () => {
-  return (
-    <div className="mt-8">
-    <AttendanceStats />
-      <AttendanceRecord />
 
-    </div>
-  );
-};
-
-export default Attendance;
-
-const stats = 
-    [
-      {
-        title: "Management Users",
-        value: 4,
-        icon: <Users size={22} />,
-        bg: "bg-orange-100",
-        iconBg: "bg-orange-500",
-      },
-      {
-        title: "Designations",
-        value: 3,
-        icon: <ShieldCheck size={22} />,
-        bg: "bg-blue-100",
-        iconBg: "bg-blue-500",
-      },
-      {
-        title: "Active Users",
-        value: 5,
-        icon: <UserCheck size={22} />,
-        bg: "bg-green-100",
-        iconBg: "bg-green-500",
-      },
-    ]
-
-const AttendanceStats = ({ stats: statsProp }) => {
-  const statsData = statsProp ?? stats;
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 p-4 gap-6">
-      {statsData.map((item, index) => (
-        <div
-          key={index}
-          className="bg-white rounded-2xl p-8 flex items-center justify-between shadow-md hover:shadow-lg"
-        >
-          <div>
-            <p className="text-gray-500 text-sm">{item.title}</p>
-            <h2 className="text-2xl mt-2">{item.value}</h2>
-          </div>
-
-          <div
-            className={`w-12 h-12 flex items-center justify-center rounded-xl text-white ${item.iconBg}`}
-          >
-            {item.icon}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
+// Data used
 const data = {
   Drivers: [
     { id: "D001", name: "John Doe", vehicle: "FK-001", date: "2025-11-19", checkIn: "06:00 AM", checkOut: "02:00 PM", status: "Present" },
@@ -124,6 +61,49 @@ const data = {
     { id: "L015", name: "Hamza Siddiqui", AssignedTo: "Excavator", date: "2025-11-19", checkIn: "02:00 PM", checkOut: "-", status: "Present" },
   ],
 };
+
+const attendanceData = [
+  {
+    id: 1,
+    title: "Driver Presents",
+    present: 3,
+    total: 4,
+    color: "bg-orange-500",
+  },
+  {
+    id: 2,
+    title: "Supervisors Presents",
+    present: 3,
+    total: 4,
+    color: "bg-blue-600",
+  },
+  {
+    id: 3,
+    title: "Laborers Presents",
+    present: 3,
+    total: 4,
+    color: "bg-green-600",
+  },
+];
+
+
+
+const Attendance = () => {
+  return (
+    <div className="mt-8">
+    
+      <AttendanceSummary />
+      <AttendanceRecord />
+
+    </div>
+  );
+};
+
+export default Attendance;
+
+//////////
+
+
 
 const AttendanceRecord = () => {
   const [activeTab, setActiveTab] = useState("Drivers");
@@ -196,7 +176,7 @@ const AttendanceRecord = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-6">
+    <div className="bg-gray-100 min-h-screen mt-8">
       <div className="bg-white rounded-2xl shadow-md">
         {/* Header */}
         <div className="flex justify-between p-6 items-center">
@@ -217,7 +197,7 @@ const AttendanceRecord = () => {
               />
             </div>
 
-            <select className="px-4 py-2 rounded-lg border border-gray-200">
+            <select className="px-4 py-2 rounded-lg border border-gray-200 ">
               <option>All Shifts</option>
               <option>Morning</option>
               <option>Evening</option>
@@ -364,3 +344,47 @@ const AttendanceRecord = () => {
     </div>
   );
 };
+
+
+/////////////
+
+
+const AttendanceCard = ({ title, present, total, color }) => {
+  const percentage = Math.round((present / total) * 100);
+
+  return (
+    <div className="bg-white rounded-2xl p-6  flex items-center justify-between w-70 shadow-md hover:shadow-lg ">
+      {/* Left Side */}
+      <div>
+        <h3 className="text-gray-600 text-sm font-medium">{title}</h3>
+        <p className="text-xl font-semibold text-gray-800 mt-1">
+          {present}/{total}
+        </p>
+        <p className="text-green-500 text-sm mt-1">
+          {percentage}% Attendance
+        </p>
+      </div>
+
+      {/* Right Icon */}
+      <div className={`w-12 h-12 flex items-center justify-center rounded-xl ${color}`}>
+        <Check className="text-white w-6 h-6" />
+      </div>
+    </div>
+  );
+};
+
+ function AttendanceSummary() {
+  return (
+    <div className="flex  gap-4  flex-wrap">
+      {attendanceData.map((item) => (
+        <AttendanceCard
+          key={item.id}
+          title={item.title}
+          present={item.present}
+          total={item.total}
+          color={item.color}
+        />
+      ))}
+    </div>
+  );
+}
