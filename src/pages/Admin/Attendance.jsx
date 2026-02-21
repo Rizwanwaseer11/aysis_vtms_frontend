@@ -176,7 +176,7 @@ const AttendanceRecord = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen mt-8">
+    <div className="bg-gray-100 min-h-screen mt-6">
       <div className="bg-white rounded-2xl shadow-md">
         {/* Header */}
         <div className="flex justify-between p-6 items-center">
@@ -353,7 +353,7 @@ const AttendanceCard = ({ title, present, total, color }) => {
   const percentage = Math.round((present / total) * 100);
 
   return (
-    <div className="bg-white rounded-2xl p-6  flex items-center justify-between w-70 shadow-md hover:shadow-lg ">
+    <div className="bg-white rounded-2xl p-6  flex items-center justify-between w-80 shadow-md hover:shadow-lg ">
       {/* Left Side */}
       <div>
         <h3 className="text-gray-600 text-sm font-medium">{title}</h3>
