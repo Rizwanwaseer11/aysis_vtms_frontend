@@ -121,13 +121,13 @@ const Sidebar = () => {
             </NavLink>
           );
         })}
-
+< hr  className="text-gray-300 border "/>
         <button
           type="button"
           onClick={handleLogout}
-          className="flex items-center text-sm font-medium text-[#9197B3] hover:bg-[#0060B9]/10 hover:text-[#0060B9] rounded-lg transition-all duration-200"
+          className="flex items-center text-sm font-medium text-[#9197B3] hover:bg-[#0060B9]/10 hover:text-[#0060B9] w-full py-2 rounded-lg transition-all duration-200"
         >
-          <div className="w-6 h-6 mr-3 rounded-md flex items-center justify-center bg-[#0060B9] text-white text-xs">
+          <div className="w-6 h-6 mr-3 rounded-md flex items-center justify-center bg-red-500 text-white text-xs">
             <LogOut size={14} />
           </div>
           <span>LogOut</span>

@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import { Nav } from "../components/Navbar";
+import DashboardHeader from "../components/Header";
+
 
 const AdminLayout = () => {
   return (
@@ -9,7 +10,7 @@ const AdminLayout = () => {
       <div className="flex min-h-[calc(100vh-80px)]">
         <Sidebar />
         <div className="flex-1 px-8 py-5">
-          <Nav />
+          <DashboardHeader />
           <div >
           {/* <div className="mt-8 bg-white p-6 rounded-lg shadow"> */}
             <Outlet />
@@ -21,3 +22,5 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
+
+
