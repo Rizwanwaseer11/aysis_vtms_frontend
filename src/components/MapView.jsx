@@ -13,18 +13,27 @@ const defaultIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-const center = {
+const defaultCenter = {
   lat: 24.8607, // Karachi example
   lng: 67.0011,
 };
 
-const GoogleMapView = () => {
-  const locations = [
-    { id: 1, lat: 24.8615, lng: 67.005, type: "green" },
-    { id: 2, lat: 24.859, lng: 67.002, type: "red" },
-    { id: 3, lat: 24.863, lng: 67.008, type: "green" },
-    { id: 4, lat: 24.857, lng: 67.006, type: "red" },
-  ];
+const GoogleMapView = ({ bins = [] }) => {
+  const locations = bins
+    .filter((bin) => Number.isFinite(bin?.lat) && Number.isFinite(bin?.lng))
+    .map((bin) => ({
+      id: bin._id || bin.binNumber,
+      lat: bin.lat,
+      lng: bin.lng,
+      binNumber: bin.binNumber,
+      zoneName: bin.zoneName,
+      wardName: bin.wardName,
+      isActive: bin.isActive,
+    }));
+
+  const center = locations.length
+    ? { lat: locations[0].lat, lng: locations[0].lng }
+    : defaultCenter;
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -47,8 +56,10 @@ const GoogleMapView = () => {
             >
               <Popup>
                 <div className="text-sm">
-                  <div>Bin #{loc.id}</div>
-                  <div className="text-gray-500">{loc.type.toUpperCase()}</div>
+                  <div>Bin #{loc.binNumber || loc.id}</div>
+                  <div className="text-gray-500">
+                    {loc.zoneName || "Unknown zone"} • {loc.wardName || "Unknown ward"}
+                  </div>
                 </div>
               </Popup>
             </Marker>

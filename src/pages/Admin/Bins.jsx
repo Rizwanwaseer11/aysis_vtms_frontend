@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useGetForkActivitiesQuery } from "../../store/api";
 
 // Data
 const operationsData = [
@@ -61,64 +62,6 @@ const operationsData = [
   },
 ];
 
-const binsData = [
-  {
-    id: "B-001",
-    zone: "Zone-01",
-    uc: "UC-01",
-    ward: "Ward-01",
-    checkIn: "10:30 AM",
-    checkOut: "09:30 AM",
-  },
-  {
-    id: "B-002",
-    zone: "Zone-02",
-    uc: "UC-02",
-    ward: "Ward-02",
-    checkIn: "10:20 PM",
-    checkOut: "09:30 PM",
-  },
-  {
-    id: "B-003",
-    zone: "Zone-03",
-    uc: "UC-03",
-    ward: "Ward-01",
-    checkIn: "09:30 AM",
-    checkOut: "11:00 AM",
-  },
-  {
-    id: "B-004",
-    zone: "Zone-04",
-    uc: "UC-01",
-    ward: "Ward-01",
-    checkIn: "09:00 PM",
-    checkOut: "09:00 PM",
-  },
-  {
-    id: "B-005",
-    zone: "Zone-05",
-    uc: "UC-01",
-    ward: "Ward-01",
-    checkIn: "11:00 AM",
-    checkOut: "11:00 AM",
-  },
-  {
-    id: "B-006",
-    zone: "Zone-06",
-    uc: "UC-01",
-    ward: "Ward-03",
-    checkIn: "09:00 PM",
-    checkOut: "09:00 PM",
-  },
-  {
-    id: "B-007",
-    zone: "Zone-07",
-    uc: "UC-01",
-    ward: "Ward-02",
-    checkIn: "11:00 AM",
-    checkOut: "11:00 AM",
-  },
-];
 
 // Main
 
@@ -177,26 +120,42 @@ function OperationsSummary() {
 function BinsDetail() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
+  const debouncedSearch = useDebouncedValue(search, 350);
+  const trimmedSearch = debouncedSearch.trim();
 
-  const filteredData = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    if (!query) return binsData;
-
-    return binsData.filter((item) =>
-      [item.id, item.zone, item.uc, item.ward, item.checkIn, item.checkOut]
-        .join(" ")
-        .toLowerCase()
-        .includes(query),
+  const { data: activitiesResponse, isLoading, isError } =
+    useGetForkActivitiesQuery(
+      { page: 1, perPage: "all" },
+      { refetchOnMountOrArgChange: true },
     );
-  }, [search]);
 
-  const totalItems = filteredData.length;
+  const activities = activitiesResponse?.data?.items || [];
+  const filteredActivities = useMemo(() => {
+    const query = trimmedSearch.toLowerCase();
+    if (!query) return activities;
+    return activities.filter((item) => {
+      const text = [
+        item?.fork?.binNumber,
+        item?.fork?.manualBinNumber,
+        item?.geo?.zoneName,
+        item?.geo?.ucName,
+        item?.geo?.wardName,
+        item?.vehicle?.vehicleNumber,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return text.includes(query);
+    });
+  }, [activities, trimmedSearch]);
+
+  const totalItems = filteredActivities.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const startIndex = (safeCurrentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedData = filteredData.slice(startIndex, endIndex);
+  const paginatedActivities = filteredActivities.slice(startIndex, endIndex);
   const showingFrom = totalItems > 0 ? startIndex + 1 : 0;
   const showingTo = totalItems > 0 ? Math.min(endIndex, totalItems) : 0;
 
@@ -276,31 +235,72 @@ function BinsDetail() {
             </thead>
 
             <tbody>
-              {paginatedData.map((bin) => (
-                <tr
-                  key={bin.id}
-                  className="even:bg-white odd:bg-gray-100 hover:bg-gray-200"
-                >
-                  <td className="p-4">{bin.id}</td>
-                  <td className="p-4">{bin.zone}</td>
-                  <td className="p-4">{bin.uc}</td>
-                  <td className="p-4">{bin.ward}</td>
-
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-                      {bin.checkIn}
-                    </div>
-                  </td>
-
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-                      {bin.checkOut}
-                    </div>
+              {isLoading && (
+                <tr>
+                  <td className="p-4 text-gray-500" colSpan={6}>
+                    Loading bins...
                   </td>
                 </tr>
-              ))}
+              )}
+              {isError && (
+                <tr>
+                  <td className="p-4 text-red-500" colSpan={6}>
+                    Unable to load bins.
+                  </td>
+                </tr>
+              )}
+              {!isLoading && !isError && paginatedActivities.length === 0 && (
+                <tr>
+                  <td className="p-4 text-gray-500" colSpan={6}>
+                    No bins found.
+                  </td>
+                </tr>
+              )}
+              {!isLoading &&
+                !isError &&
+                paginatedActivities.map((activity) => {
+                  const placed = activity?.fork?.placed;
+                  const statusClass =
+                    placed === true
+                      ? "bg-green-500"
+                      : placed === false
+                        ? "bg-red-500"
+                        : "bg-gray-400";
+                  const binNumber =
+                    activity?.fork?.binNumber ||
+                    activity?.fork?.manualBinNumber ||
+                    activity?._id;
+                  return (
+                  <tr
+                    key={activity._id}
+                    className="even:bg-white odd:bg-gray-100 hover:bg-gray-200"
+                  >
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <span className={`h-3 w-3 rounded-full ${statusClass}`} />
+                        {binNumber}
+                      </div>
+                    </td>
+                    <td className="p-4">{activity?.geo?.zoneName || "--"}</td>
+                    <td className="p-4">{activity?.geo?.ucName || "--"}</td>
+                    <td className="p-4">{activity?.geo?.wardName || "--"}</td>
+
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                        {formatTime(activity?.before?.at)}
+                      </div>
+                    </td>
+
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                        {formatTime(activity?.after?.at)}
+                      </div>
+                    </td>
+                  </tr>
+                );
+                })}
             </tbody>
           </table>
         </div>
@@ -352,3 +352,24 @@ function BinsDetail() {
     </div>
   );
 }
+
+const formatTime = (value) => {
+  if (!value) return "--";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "--";
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const useDebouncedValue = (value, delayMs) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handle = setTimeout(() => setDebouncedValue(value), delayMs);
+    return () => clearTimeout(handle);
+  }, [value, delayMs]);
+
+  return debouncedValue;
+};
